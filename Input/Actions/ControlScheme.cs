@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -53,7 +54,8 @@ namespace UnityEngine.InputNew
 			for (int i = 0; i < m_DeviceSlots.Count; i++)
 			{
 				var deviceSlot = m_DeviceSlots[i];
-				if (device.GetType().IsInstanceOfType(deviceSlot.type.value) &&
+			    var isTypeInstance = UwpTypeUtils.IsInstanceOfType(device.GetType(), deviceSlot.type.value);
+				if (isTypeInstance &&
 					(device.tagIndex == -1 || device.tagIndex == deviceSlot.tagIndex))
 					return deviceSlot.key;
 			}

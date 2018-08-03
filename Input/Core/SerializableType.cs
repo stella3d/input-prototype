@@ -28,19 +28,14 @@ namespace UnityEngine.InputNew
 					if (m_CachedType == null)
 					{
 						var typeName = m_TypeName.Substring(0, m_TypeName.IndexOf(','));
-						var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-						foreach (var assembly in assemblies)
+						var assembly = typeof(Assembly).GetTypeInfo().Assembly;
+						try
 						{
-							try
-							{
-								m_CachedType = assembly.GetType(typeName);
-								if (m_CachedType != null)
-									break;
-							}
-							catch (ReflectionTypeLoadException)
-							{
-								// Skip any assemblies that don't load properly -- suppress errors
-							}
+							m_CachedType = assembly.GetType(typeName);
+						}
+						catch (ReflectionTypeLoadException)
+						{
+							// Skip any assemblies that don't load properly -- suppress errors
 						}
 					}
 				}

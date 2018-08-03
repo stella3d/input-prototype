@@ -129,19 +129,14 @@ namespace UnityEngine.InputNew
 							string.IsNullOrEmpty(m_CustomNamespace) ? kDefaultNamespace : m_CustomNamespace,
 							name);
 
-						var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-						foreach (var assembly in assemblies)
+					    var assembly = typeof(Assembly).GetTypeInfo().Assembly;
+						try
 						{
-							try
-							{
-								t = assembly.GetType(typeString);
-								if (t != null)
-									break;
-							}
-							catch (ReflectionTypeLoadException)
-							{
-								// Skip any assemblies that don't load properly -- suppress errors
-							}
+							t = assembly.GetType(typeString);
+						}
+						catch (ReflectionTypeLoadException)
+						{
+							// Skip any assemblies that don't load properly -- suppress errors
 						}
 					}
 				}
@@ -180,47 +175,6 @@ namespace UnityEngine.InputNew
 		public void RevertCustomizations()
 		{
 			m_ControlSchemeCopies = null;
-		}
-
-		public void RevertCustomizations(ControlScheme controlScheme)
-		{
-			if (m_ControlSchemeCopies != null)
-			{
-				for (var i = 0; i < m_ControlSchemeCopies.Count; ++i)
-				{
-					if (m_ControlSchemeCopies[i] == controlScheme)
-					{
-						m_ControlSchemeCopies[i] = m_ControlSchemes[i].Clone();
-						break;
-					}
-				}
-			}
-		}
-
-		public void RestoreCustomizations(string customizations)
-		{
-			var customizedControlSchemes = JsonUtility.FromJson<List<ControlScheme>>(customizations);
-			foreach (var customizedScheme in customizedControlSchemes)
-			{
-				// See if it replaces an existing scheme.
-				var replacesExisting = false;
-				for (var i = 0; i < controlSchemes.Count; ++i)
-				{
-					if (String.Compare(controlSchemes[i].name, customizedScheme.name, CultureInfo.InvariantCulture, CompareOptions.IgnoreCase) == 0)
-					{
-						// Yes, so get rid of current scheme.
-						controlSchemes[i] = customizedScheme;
-						replacesExisting = true;
-						break;
-					}
-				}
-
-				if (!replacesExisting)
-				{
-					// No, so add as new scheme.
-					controlSchemes.Add(customizedScheme);
-				}
-			}
 		}
 	}
 }

@@ -89,9 +89,11 @@ namespace UnityEngine.InputNew
 		{
 			if (s_DeviceTypes != null)
 				return;
-			
+
+		    var assembly = typeof(Assembly).GetTypeInfo().Assembly;
+
 			s_DeviceTypes = (
-				from assemblyType in Assembly.GetCallingAssembly().GetExportedTypes()
+				from assemblyType in assembly.GetExportedTypes()
 				where assemblyType.GetTypeInfo().IsSubclassOf(typeof(InputDevice))
 				select assemblyType
 			).OrderBy(e => GetInheritancePath(e)).ToArray();

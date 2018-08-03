@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace UnityEngine.InputNew
 {
@@ -118,7 +119,8 @@ namespace UnityEngine.InputNew
 					float foundDeviceTime = -1;
 					foreach (var device in availableDevices)
 					{
-						if (deviceSlot.type.value.IsInstanceOfType(device) && device.lastEventTime > foundDeviceTime
+						var isTypeInstance = UwpTypeUtils.IsInstanceOfType(deviceSlot.type.value, device);
+						if (isTypeInstance && device.lastEventTime > foundDeviceTime
 							&& (deviceSlot.tagIndex == -1 || deviceSlot.tagIndex == device.tagIndex)
 							)
 						{
@@ -335,8 +337,9 @@ namespace UnityEngine.InputNew
 			{
 				var deviceState = deviceStates[i];
 				var inputDevice = deviceState.controlProvider as InputDevice;
+			    var isTypeInstance = UwpTypeUtils.IsInstanceOfType(deviceSlot.type.value, deviceState.controlProvider);
 				// If this isn't an input device, simply make sure that the types match
-				if (inputDevice == null && deviceSlot.type.value.IsInstanceOfType(deviceState.controlProvider))
+				if (inputDevice == null && isTypeInstance)
 					return deviceState;
 
 				if (inputDevice != null && (deviceSlot.tagIndex == -1 || inputDevice.tagIndex == deviceSlot.tagIndex))

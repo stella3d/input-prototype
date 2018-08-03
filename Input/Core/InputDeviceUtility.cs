@@ -91,9 +91,8 @@ namespace UnityEngine.InputNew
 				return;
 			
 			s_DeviceTypes = (
-				from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
-				from assemblyType in domainAssembly.GetExportedTypes()
-				where assemblyType.IsSubclassOf(typeof(InputDevice))
+				from assemblyType in Assembly.GetCallingAssembly().GetExportedTypes()
+				where assemblyType.GetTypeInfo().IsSubclassOf(typeof(InputDevice))
 				select assemblyType
 			).OrderBy(e => GetInheritancePath(e)).ToArray();
 			
@@ -135,16 +134,20 @@ namespace UnityEngine.InputNew
 		
 		static string GetInheritancePath(Type type)
 		{
-			if (type.BaseType == typeof(InputDevice))
-				return type.Name;
-			return GetInheritancePath(type.BaseType) + "/" + type.Name;
+		    var typeInfo = type.GetTypeInfo();
+            if(typeInfo.BaseType == typeof(InputDevice))
+                return type.Name;
+
+			return GetInheritancePath(typeInfo.BaseType) + "/" + typeInfo.Name;
 		}
 		
 		static int GetInheritanceDepth(Type type)
 		{
-			if (type.BaseType == typeof(InputDevice))
+		    var typeInfo = type.GetTypeInfo();
+			if (typeInfo.BaseType == typeof(InputDevice))
 				return 0;
-			return GetInheritanceDepth(type.BaseType) + 1;
+
+			return GetInheritanceDepth(typeInfo.BaseType) + 1;
 		}
 	}
 }

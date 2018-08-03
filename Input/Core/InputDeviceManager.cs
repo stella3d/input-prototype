@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine.XR;
 
 namespace UnityEngine.InputNew
@@ -233,7 +234,7 @@ namespace UnityEngine.InputNew
 			m_Devices.Remove(device);
 			m_Devices.Add(device);
 
-			var baseType = deviceType.BaseType;
+			var baseType = deviceType.GetTypeInfo().BaseType;
 			if (baseType != typeof(InputDevice))
 				RegisterDeviceInternal(baseType, device);
 		}

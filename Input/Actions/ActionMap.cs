@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Serialization;
+using ReflectionBridge;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -129,15 +130,19 @@ namespace UnityEngine.InputNew
 							string.IsNullOrEmpty(m_CustomNamespace) ? kDefaultNamespace : m_CustomNamespace,
 							name);
 
-					    var assembly = typeof(Assembly).GetTypeInfo().Assembly;
-						try
-						{
-							t = assembly.GetType(typeString);
-						}
-						catch (ReflectionTypeLoadException)
-						{
-							// Skip any assemblies that don't load properly -- suppress errors
-						}
+                        List<Assembly> assemblies = new List<Assembly>();
+                        Reflector.GetCurrentAssemblies(assemblies);
+                        foreach (var assembly in assemblies)
+                        {
+                            try
+                            {
+                                t = assembly.GetType(typeString);
+                            }
+                            catch (ReflectionTypeLoadException)
+                            {
+                                // Skip any assemblies that don't load properly -- suppress errors
+                            }
+                        }
 					}
 				}
 				catch (Exception e)

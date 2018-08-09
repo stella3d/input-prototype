@@ -1,0 +1,3 @@
+[submodule "reflection-bridge"]
+	path = reflection-bridge
+	url = https://github.com/stella3d/reflection-bridge.git

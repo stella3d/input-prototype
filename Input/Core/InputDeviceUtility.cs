@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System;
 using System.Linq;
+using ReflectionBridge;
 
 namespace UnityEngine.InputNew
 {
@@ -90,11 +91,13 @@ namespace UnityEngine.InputNew
 			if (s_DeviceTypes != null)
 				return;
 
-		    var assembly = typeof(Assembly).GetTypeInfo().Assembly;
+            List<Assembly> assemblies = new List<Assembly>();
+            Reflector.GetCurrentAssemblies(assemblies);
 
 			s_DeviceTypes = (
+                from assembly in assemblies
 				from assemblyType in assembly.GetExportedTypes()
-				where assemblyType.GetTypeInfo().IsSubclassOf(typeof(InputDevice))
+				where Reflector.IsInstanceOfType(assemblyType, typeof(InputDevice))
 				select assemblyType
 			).OrderBy(e => GetInheritancePath(e)).ToArray();
 			
@@ -136,20 +139,20 @@ namespace UnityEngine.InputNew
 		
 		static string GetInheritancePath(Type type)
 		{
-		    var typeInfo = type.GetTypeInfo();
-            if(typeInfo.BaseType == typeof(InputDevice))
+		    var baseType = type.GetBaseType();
+            if(baseType == typeof(InputDevice))
                 return type.Name;
 
-			return GetInheritancePath(typeInfo.BaseType) + "/" + typeInfo.Name;
+			return GetInheritancePath(baseType) + "/" + type.Name;
 		}
 		
 		static int GetInheritanceDepth(Type type)
 		{
-		    var typeInfo = type.GetTypeInfo();
-			if (typeInfo.BaseType == typeof(InputDevice))
+            var baseType = type.GetBaseType();
+			if (baseType == typeof(InputDevice))
 				return 0;
 
-			return GetInheritanceDepth(typeInfo.BaseType) + 1;
+			return GetInheritanceDepth(baseType) + 1;
 		}
 	}
 }

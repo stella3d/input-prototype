@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
+using ReflectionBridge;
 
 namespace UnityEngine.InputNew
 {
@@ -28,15 +30,20 @@ namespace UnityEngine.InputNew
 					if (m_CachedType == null)
 					{
 						var typeName = m_TypeName.Substring(0, m_TypeName.IndexOf(','));
-						var assembly = typeof(Assembly).GetTypeInfo().Assembly;
-						try
-						{
-							m_CachedType = assembly.GetType(typeName);
-						}
-						catch (ReflectionTypeLoadException)
-						{
-							// Skip any assemblies that don't load properly -- suppress errors
-						}
+
+                        List<Assembly> assemblies = new List<Assembly>();
+                        Reflector.GetCurrentAssemblies(assemblies);
+                        foreach (var assembly in assemblies)
+                        {
+                            try
+                            {
+                                m_CachedType = assembly.GetType(typeName);
+                            }
+                            catch (ReflectionTypeLoadException)
+                            {
+                                // Skip any assemblies that don't load properly -- suppress errors
+                            }
+                        }
 					}
 				}
 				return m_CachedType;

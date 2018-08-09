@@ -137,6 +137,8 @@ namespace UnityEngine.InputNew
                             try
                             {
                                 t = assembly.GetType(typeString);
+                                if (t != null)
+                                    break;
                             }
                             catch (ReflectionTypeLoadException)
                             {

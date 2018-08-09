@@ -97,7 +97,7 @@ namespace UnityEngine.InputNew
 			s_DeviceTypes = (
                 from assembly in assemblies
 				from assemblyType in assembly.GetExportedTypes()
-				where Reflector.IsInstanceOfType(assemblyType, typeof(InputDevice))
+				where Reflector.IsSubclassOf(assemblyType, typeof(InputDevice))
 				select assemblyType
 			).OrderBy(e => GetInheritancePath(e)).ToArray();
 			

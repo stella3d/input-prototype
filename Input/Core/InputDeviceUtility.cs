@@ -126,8 +126,8 @@ namespace UnityEngine.InputNew
 			return s_DeviceTypes[index];
 		}
 
-	    public static string[] GetDeviceTags(Type type)
-	    {
+        public static string[] GetDeviceTags(Type type)
+        {
 	        string[] tags = null;
             PropertyInfo info = type.GetProperty("Tags", BindingFlags.Static | BindingFlags.Public);
 	        if (info != null)
@@ -135,24 +135,24 @@ namespace UnityEngine.InputNew
                 tags = (string[])info.GetValue(null, null);
             }
             return tags;
-	    }
+        }
 		
-		static string GetInheritancePath(Type type)
-		{
-		    var baseType = type.GetBaseType();
+        static string GetInheritancePath(Type type)
+        {
+            var baseType = type.GetBaseType();
             if(baseType == typeof(InputDevice))
                 return type.Name;
 
-			return GetInheritancePath(baseType) + "/" + type.Name;
-		}
+            return GetInheritancePath(baseType) + "/" + type.Name;
+        }
 		
-		static int GetInheritanceDepth(Type type)
-		{
+        static int GetInheritanceDepth(Type type)
+        {
             var baseType = type.GetBaseType();
-			if (baseType == typeof(InputDevice))
-				return 0;
+            if (baseType == typeof(InputDevice))
+	            return 0;
 
-			return GetInheritanceDepth(baseType) + 1;
-		}
+            return GetInheritanceDepth(baseType) + 1;
+        }
 	}
 }
